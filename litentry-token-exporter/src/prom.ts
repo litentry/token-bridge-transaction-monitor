@@ -130,7 +130,6 @@ new PromClient.Gauge({
   registers: [register],
   async collect() {
     let blockNumber = loadCheckpoint();
-    blockNumber = 0;
     console.log("query from block number: ", blockNumber);
     const data = await query(
       getTransactionValueGreaterThanQuery(0, blockNumber)

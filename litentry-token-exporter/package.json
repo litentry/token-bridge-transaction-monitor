@@ -8,7 +8,8 @@
     "start:dev": "nodemon src/index.ts",
     "start": "nodemon src/index.ts",
     "start:prod": "pm2 start build/index.js --restart-delay=2000 --name litentry-token-exporter",
-    "stop:prod": "pm2 stop litentry-token-exporter"
+    "stop:prod": "pm2 stop litentry-token-exporter",
+    "restart:prod": "[[ $(pm2 status |grep litentry-token-exporter|wc -l) ]] && yarn stop:prod && yarn start:prod"
   },
   "dependencies": {
     "@types/axios": "^0.14.0",

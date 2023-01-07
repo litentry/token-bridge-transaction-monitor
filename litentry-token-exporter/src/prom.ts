@@ -6,7 +6,6 @@ import {
   getDailyTransactionQuery,
   getWeeklyTransactionQuery,
   getMonthlyTransactionQuery,
-  // getBigTransactionQuery,
   getTransactionValueGreaterThanQuery,
   query,
 } from "./query";

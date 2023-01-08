@@ -1,0 +1,343 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 4,
+  "links": [
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": false,
+      "tags": [],
+      "targetBlank": false,
+      "title": "New link",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    }
+  ],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "rVq700p4k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 10000000
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 10,
+        "x": 0,
+        "y": 0
+      },
+      "id": 6,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "rVq700p4k"
+          },
+          "editorMode": "code",
+          "expr": "lit_report{volume=\"daily\", job=\"transaction_report\"}",
+          "format": "time_series",
+          "interval": "",
+          "legendFormat": "{{volume}}",
+          "range": true,
+          "refId": "daily"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "rVq700p4k"
+          },
+          "editorMode": "builder",
+          "expr": "lit_report{volume=\"weekly\", job=\"transaction_report\"}",
+          "hide": false,
+          "legendFormat": "{{volume}}",
+          "range": true,
+          "refId": "weekly"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "rVq700p4k"
+          },
+          "editorMode": "builder",
+          "expr": "lit_report{volume=\"monthly\", job=\"transaction_report\"}",
+          "hide": false,
+          "legendFormat": "{{volume}}",
+          "range": true,
+          "refId": "monthly"
+        }
+      ],
+      "title": "Transaction Volume",
+      "transformations": [
+        {
+          "id": "extractFields",
+          "options": {
+            "format": "auto",
+            "replace": false,
+            "source": "{__name__=\"lit_report\", instance=\"192.168.2.34:18080\", job=\"transaction_report\", volume=\"daily\"}"
+          }
+        }
+      ],
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "rVq700p4k"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1000
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 16,
+        "y": 0
+      },
+      "id": 4,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "rVq700p4k"
+          },
+          "editorMode": "builder",
+          "exemplar": false,
+          "expr": "lit_report{amount=\"daily\", job=\"transaction_report\"}",
+          "instant": false,
+          "legendFormat": "{{amount}}",
+          "range": true,
+          "refId": "daily"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "rVq700p4k"
+          },
+          "editorMode": "builder",
+          "expr": "lit_report{amount=\"weekly\", job=\"transaction_report\"}",
+          "hide": false,
+          "legendFormat": "{{amount}}",
+          "range": true,
+          "refId": "weekly"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "rVq700p4k"
+          },
+          "editorMode": "builder",
+          "expr": "lit_report{amount=\"monthly\", job=\"transaction_report\"}",
+          "hide": false,
+          "legendFormat": "{{amount}}",
+          "range": true,
+          "refId": "monthly"
+        }
+      ],
+      "title": "Transaction Amount",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "rVq700p4k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto",
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1000
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 7
+      },
+      "id": 8,
+      "options": {
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "count"
+          ],
+          "show": true
+        },
+        "frameIndex": 5,
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "1000"
+          }
+        ]
+      },
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "rVq700p4k"
+          },
+          "editorMode": "builder",
+          "expr": "lit_transactions{job=\"transaction_report\"}",
+          "instant": false,
+          "legendFormat": "{{transactionHash}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Transactions",
+      "transformations": [
+        {
+          "id": "labelsToFields",
+          "options": {
+            "keepLabels": [
+              "blockNumber",
+              "blockTimestamp",
+              "from",
+              "to",
+              "transactionHash",
+              "value"
+            ],
+            "mode": "columns",
+            "valueLabel": "value"
+          }
+        }
+      ],
+      "type": "table"
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 37,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Litentry Transaction Report",
+  "uid": "vA-1d_pVz",
+  "version": 30,
+  "weekStart": ""
+}

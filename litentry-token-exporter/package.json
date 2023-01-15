@@ -6,6 +6,7 @@
   "scripts": {
     "build": "tsc",
     "start:dev": "nodemon src/index.ts",
+    "start:test": "nodemon src/circulation.ts",
     "start": "nodemon src/index.ts",
     "start:prod": "pm2 start build/index.js --restart-delay=2000 --name litentry-token-exporter",
     "stop:prod": "pm2 stop litentry-token-exporter",
@@ -18,6 +19,7 @@
     "axios": "^1.2.2",
     "bignumber.js": "^9.1.1",
     "dotenv": "^16.0.3",
+    "ethers": "^5.7.2",
     "express": "^4.18.2",
     "prom-client": "^14.1.1"
   },

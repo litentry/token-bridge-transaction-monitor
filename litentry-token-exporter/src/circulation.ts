@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 const { BigNumber } = require("@ethersproject/bignumber");
-// import { BigNumber } from "@ethersproject/bignumber";
+import { ApiPromise, WsProvider } from "@polkadot/api";
 
 const ECOSYSTEM_ADDRESS = "0x9cdf4e1347328416daf17335caf6a314201cc1dd";
 const TEAM_ADDRESS = "0x65e4a77536d47bf42db6817373939a63c00a0904";
@@ -54,18 +54,15 @@ async function ethLockedInfo() {
   ];
   const rets = await Promise.all(tasks);
   const balanceOf = {
-    ecosystem: tasks[0],
-    team: tasks[1],
-    foundation: tasks[2],
-    bridge: tasks[3],
+    ecosystem: rets[0].toString(),
+    team: rets[1].toString(),
+    foundation: rets[2].toString(),
+    bridge: rets[3].toString(),
   };
 
-  console.log(balanceOf);
   return balanceOf;
 }
-async function bscLockedInfo() {
-  return {};
-}
+
 async function ethTotalSupply() {
   const abi = {
     inputs: [],
@@ -77,8 +74,8 @@ async function ethTotalSupply() {
 
   const lit = new ethers.Contract(LIT.eth, [abi], ethAccount);
   const totalSupply = await lit.totalSupply();
-  console.log("eth: ", totalSupply.toString());
-  return totalSupply;
+
+  return totalSupply.toString();
 }
 
 async function bscTotalSupply() {
@@ -92,12 +89,52 @@ async function bscTotalSupply() {
 
   const lit = new ethers.Contract(LIT.bsc, [abi], bscAccount);
   const totalSupply = await lit.totalSupply();
-  console.log("bsc: ", totalSupply.toString());
-  return totalSupply;
+  return totalSupply.toString();
 }
 
-// TODO: Add parachain information
-ethTotalSupply();
-bscTotalSupply();
-ethLockedInfo();
-bscLockedInfo();
+class Utils {
+  litentryApi: any;
+  litmusApi: any;
+  isInited: boolean;
+  constructor() {
+    this.isInited = false;
+  }
+  async init() {
+    if (!this.isInited) {
+      this.litentryApi = await ApiPromise.create({
+        provider: new WsProvider("wss://rpc.litentry-parachain.litentry.io"),
+      });
+      this.litmusApi = await ApiPromise.create({
+        provider: new WsProvider("wss://rpc.litmus-parachain.litentry.io"),
+      });
+      this.isInited = true;
+    }
+  }
+  async totalSupply() {
+    // total supply on litentry/litmus chain
+    return {
+      litentry: (
+        await this.litentryApi.query.balances.totalIssuance()
+      ).toString(),
+      litmus: (await this.litmusApi.query.balances.totalIssuance()).toString(),
+    };
+  }
+}
+const utils = new Utils();
+export async function totalSupply() {
+  await utils.init();
+  const rets = await Promise.all([
+    ethTotalSupply(),
+    bscTotalSupply(),
+    utils.totalSupply(),
+    ethLockedInfo(),
+  ]);
+
+  return {
+    eth_total_supply: rets[0],
+    bsc_total_supply: rets[1],
+    litentry_total_supply: rets[2]["litentry"],
+    litmus_total_supply: rets[2]["litmus"],
+    locked_info: rets[3],
+  };
+}

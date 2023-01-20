@@ -10,6 +10,7 @@ import {
   query,
 } from "./query";
 import type { Transfer } from "./query";
+import { totalSupply } from "./circulation";
 const collectDefaultMetrics = PromClient.collectDefaultMetrics;
 const Registry = PromClient.Registry;
 export const register = new Registry();
@@ -160,6 +161,64 @@ new PromClient.Gauge({
   },
 });
 
+new PromClient.Gauge({
+  name: "lit_token_supply_and_locked",
+  help: "Report about total supply and locked token information",
+  labelNames: ["total_supply", "locked"],
+
+  registers: [register],
+  async collect() {
+    const data = await totalSupply();
+    this.set(
+      { total_supply: "eth" },
+      new BigNumber(data.eth_total_supply)
+        .dividedBy(new BigNumber(1e18))
+        .toNumber()
+    );
+    this.set(
+      { total_supply: "bsc" },
+      new BigNumber(data.bsc_total_supply)
+        .dividedBy(new BigNumber(1e18))
+        .toNumber()
+    );
+    this.set(
+      { total_supply: "litentry" },
+      new BigNumber(data.litentry_total_supply)
+        .dividedBy(new BigNumber(1e12))
+        .toNumber()
+    );
+    this.set(
+      { total_supply: "litmus" },
+      new BigNumber(data.litmus_total_supply)
+        .dividedBy(new BigNumber(1e12))
+        .toNumber()
+    );
+    this.set(
+      { locked: "ecosystem" },
+      new BigNumber(data.locked_info.ecosystem)
+        .dividedBy(new BigNumber(1e18))
+        .toNumber()
+    );
+    this.set(
+      { locked: "team" },
+      new BigNumber(data.locked_info.team)
+        .dividedBy(new BigNumber(1e18))
+        .toNumber()
+    );
+    this.set(
+      { locked: "foundation" },
+      new BigNumber(data.locked_info.foundation)
+        .dividedBy(new BigNumber(1e18))
+        .toNumber()
+    );
+    this.set(
+      { locked: "bridge" },
+      new BigNumber(data.locked_info.bridge)
+        .dividedBy(new BigNumber(1e18))
+        .toNumber()
+    );
+  },
+});
 const checkpointPath = `${process.env.HOME}/.litentry/checkpoint.txt`;
 
 function saveCheckpoint(blockNumber: number) {

@@ -171,49 +171,49 @@ new PromClient.Gauge({
     const data = await totalSupply();
     this.set(
       { total_supply: "eth" },
-      new BigNumber(data.eth_total_supply)
+      new BigNumber(data.eth_total_supply.amount)
         .dividedBy(new BigNumber(1e18))
         .toNumber()
     );
     this.set(
       { total_supply: "bsc" },
-      new BigNumber(data.bsc_total_supply)
+      new BigNumber(data.bsc_total_supply.amount)
         .dividedBy(new BigNumber(1e18))
         .toNumber()
     );
     this.set(
       { total_supply: "litentry" },
-      new BigNumber(data.litentry_total_supply)
+      new BigNumber(data.litentry_total_supply.amount)
         .dividedBy(new BigNumber(1e12))
         .toNumber()
     );
     this.set(
       { total_supply: "litmus" },
-      new BigNumber(data.litmus_total_supply)
+      new BigNumber(data.litmus_total_supply.amount)
         .dividedBy(new BigNumber(1e12))
         .toNumber()
     );
     this.set(
       { locked: "ecosystem" },
-      new BigNumber(data.locked_info.ecosystem)
+      new BigNumber(data.locked_info.ecosystem.amount)
         .dividedBy(new BigNumber(1e18))
         .toNumber()
     );
     this.set(
       { locked: "team" },
-      new BigNumber(data.locked_info.team)
+      new BigNumber(data.locked_info.team.amount)
         .dividedBy(new BigNumber(1e18))
         .toNumber()
     );
     this.set(
       { locked: "foundation" },
-      new BigNumber(data.locked_info.foundation)
+      new BigNumber(data.locked_info.foundation.amount)
         .dividedBy(new BigNumber(1e18))
         .toNumber()
     );
     this.set(
       { locked: "bridge" },
-      new BigNumber(data.locked_info.bridge)
+      new BigNumber(data.locked_info.bridge.amount)
         .dividedBy(new BigNumber(1e18))
         .toNumber()
     );

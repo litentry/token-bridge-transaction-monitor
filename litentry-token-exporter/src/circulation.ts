@@ -54,10 +54,10 @@ async function ethLockedInfo() {
   ];
   const rets = await Promise.all(tasks);
   const balanceOf = {
-    ecosystem: rets[0].toString(),
-    team: rets[1].toString(),
-    foundation: rets[2].toString(),
-    bridge: rets[3].toString(),
+    ecosystem: { amount: rets[0].toString(), decimal: 18 },
+    team: { amount: rets[1].toString(), decimal: 18 },
+    foundation: { amount: rets[2].toString(), decimal: 18 },
+    bridge: { amount: rets[3].toString(), decimal: 18 },
   };
 
   return balanceOf;
@@ -75,7 +75,7 @@ async function ethTotalSupply() {
   const lit = new ethers.Contract(LIT.eth, [abi], ethAccount);
   const totalSupply = await lit.totalSupply();
 
-  return totalSupply.toString();
+  return { amount: totalSupply.toString(), decimal: 18 };
 }
 
 async function bscTotalSupply() {
@@ -89,7 +89,7 @@ async function bscTotalSupply() {
 
   const lit = new ethers.Contract(LIT.bsc, [abi], bscAccount);
   const totalSupply = await lit.totalSupply();
-  return totalSupply.toString();
+  return { amount: totalSupply.toString(), decimal: 18 };
 }
 
 class Utils {
@@ -113,10 +113,18 @@ class Utils {
   async totalSupply() {
     // total supply on litentry/litmus chain
     return {
-      litentry: (
-        await this.litentryApi.query.balances.totalIssuance()
-      ).toString(),
-      litmus: (await this.litmusApi.query.balances.totalIssuance()).toString(),
+      litentry: {
+        amount: (
+          await this.litentryApi.query.balances.totalIssuance()
+        ).toString(),
+        decimal: 12,
+      },
+      litmus: {
+        amount: (
+          await this.litmusApi.query.balances.totalIssuance()
+        ).toString(),
+        decimal: 12,
+      },
     };
   }
 }
@@ -138,3 +146,4 @@ export async function totalSupply() {
     locked_info: rets[3],
   };
 }
+totalSupply();

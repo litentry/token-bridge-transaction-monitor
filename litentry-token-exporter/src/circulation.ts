@@ -100,15 +100,15 @@ class Utils {
     this.isInited = false;
   }
   async init() {
-    if (!this.isInited) {
-      this.litentryApi = await ApiPromise.create({
-        provider: new WsProvider("wss://rpc.litentry-parachain.litentry.io"),
-      });
-      this.litmusApi = await ApiPromise.create({
-        provider: new WsProvider("wss://rpc.litmus-parachain.litentry.io"),
-      });
-      this.isInited = true;
-    }
+    // if (!this.isInited) {
+    this.litentryApi = await ApiPromise.create({
+      provider: new WsProvider("wss://rpc.litentry-parachain.litentry.io"),
+    });
+    this.litmusApi = await ApiPromise.create({
+      provider: new WsProvider("wss://rpc.litmus-parachain.litentry.io"),
+    });
+    // this.isInited = true;
+    // }
   }
   async totalSupply() {
     // total supply on litentry/litmus chain

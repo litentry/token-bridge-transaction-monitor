@@ -127,8 +127,58 @@ class Utils {
       },
     };
   }
+  async staking() {
+    const total = await this.litentryApi.query.parachainStaking.total();
+
+    const _collatorInfo =
+      await this.litentryApi.query.parachainStaking.candidateInfo.entries();
+    const _delegatorInfo =
+      await this.litentryApi.query.parachainStaking.topDelegations.entries();
+    const collatorInfo: any[] = [];
+    _collatorInfo.forEach(
+      ([
+        {
+          // @ts-ignore
+          args: [account],
+        },
+        // @ts-ignore
+        value,
+      ]) => {
+        // @ts-ignore
+        let _info = JSON.parse(`${value}`);
+        // @ts-ignore
+        _info.bond = BigNumber.from(_info.bond).toString();
+        _info.totalCounted = BigNumber.from(_info.totalCounted).toString();
+        const info = { account: `${account}`, ..._info };
+        collatorInfo.push(info);
+      }
+    );
+    const delegatorInfo: any[] = [];
+    _delegatorInfo.forEach(
+      ([
+        {
+          // @ts-ignore
+          args: [account],
+        },
+        // @ts-ignore
+        value,
+      ]) => {
+        // @ts-ignore
+        const _info = JSON.parse(`${value}`);
+        // @ts-ignore
+        const info = { collator: `${account}`, ..._info };
+        info["total"] = BigNumber.from(info["total"]).toString();
+        delegatorInfo.push(info);
+      }
+    );
+    return {
+      total,
+      collators: collatorInfo,
+      delegators: delegatorInfo,
+    };
+  }
 }
-const utils = new Utils();
+export const utils = new Utils();
 export async function totalSupply() {
   await utils.init();
   const rets = await Promise.all([
@@ -146,4 +196,3 @@ export async function totalSupply() {
     locked_info: rets[3],
   };
 }
-totalSupply();

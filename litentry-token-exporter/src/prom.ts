@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import * as PromClient from "prom-client";
 import fs from "fs";
+import { utils as substrateUtils } from "./circulation";
 
 import {
   getDailyTransactionQuery,
@@ -132,11 +133,41 @@ new PromClient.Gauge({
   async collect() {
     let blockNumber = loadCheckpoint();
     console.log("query from block number: ", blockNumber);
+    console.log(getTransactionValueGreaterThanQuery(0, blockNumber));
+    // NOTES: possible bugs here ?
     const data = await query(
       getTransactionValueGreaterThanQuery(0, blockNumber)
     );
-
+    console.log(
+      "--------------------------------------------------------------------------------"
+    );
+    console.log("transfers: ");
+    console.log(data.transfers);
+    console.log(
+      "--------------------------------------------------------------------------------"
+    );
+    if (data.transfers.length === 0) {
+      return;
+    }
+    const THE_GRAPH_LIMIT = 100;
+    const length = data.transfers.length;
+    const lastBlockNumberInQuery = parseInt(
+      data.transfers[length - 1].blockNumber
+    );
+    console.log(
+      "length: ",
+      length,
+      ", lastBlockNumberInQuery: ",
+      lastBlockNumberInQuery
+    );
     for (const transfer of data.transfers) {
+      if (
+        length >= THE_GRAPH_LIMIT &&
+        parseInt(transfer.blockNumber) === lastBlockNumberInQuery
+      ) {
+        break;
+      }
+
       this.set(
         {
           ...transfer,
@@ -147,15 +178,17 @@ new PromClient.Gauge({
             .toISOString()
             .slice(0, -5),
         },
-        new BigNumber(transfer.value)
-          .dividedBy(new BigNumber(1e18))
-          .toNumber() >= 1000
-          ? 1000
-          : 0
+        0
       );
       if (blockNumber < parseInt(transfer.blockNumber)) {
         blockNumber = parseInt(transfer.blockNumber);
       }
+      console.log(
+        "blocknumber: ",
+        blockNumber,
+        ", lastBlockNumberInQuery: ",
+        lastBlockNumberInQuery
+      );
     }
     saveCheckpoint(blockNumber);
   },
@@ -219,6 +252,68 @@ new PromClient.Gauge({
     );
   },
 });
+
+new PromClient.Gauge({
+  name: "lit_staking",
+  help: "Report about staking",
+  labelNames: [
+    "collator",
+    "delegator",
+    "type",
+    "delegationCount",
+    "selfStaking",
+    "delegatedStaking",
+  ],
+
+  registers: [register],
+  async collect() {
+    await substrateUtils.init();
+    const { total, collators, delegators } = await substrateUtils.staking();
+    this.set(
+      { type: "total_staking" },
+      new BigNumber(total.amount).dividedBy(new BigNumber(1e12)).toNumber()
+    );
+    for (const collator of collators) {
+      this.set(
+        {
+          type: "collator",
+          collator: collator.account,
+          delegator: "-",
+          delegationCount: collator.delegationCount,
+          selfStaking: new BigNumber(collator.bond)
+            .dividedBy(new BigNumber(1e12))
+            .toNumber(),
+          delegatedStaking:
+            new BigNumber(collator.totalCounted)
+              .dividedBy(new BigNumber(1e12))
+              .toNumber() -
+            new BigNumber(collator.bond)
+              .dividedBy(new BigNumber(1e12))
+              .toNumber(),
+        },
+        new BigNumber(collator.bond).dividedBy(new BigNumber(1e12)).toNumber()
+      );
+    }
+    for (const ind in delegators) {
+      const ds = delegators[ind];
+      const collator = ds.collator;
+      for (const delegator of ds.delegations) {
+        this.set(
+          {
+            type: "delegator",
+            collator: collator,
+            delegator: delegator.owner,
+            delegationCount: "-",
+          },
+          new BigNumber(delegator.amount)
+            .dividedBy(new BigNumber(1e12))
+            .toNumber()
+        );
+      }
+    }
+  },
+});
+
 const checkpointPath = `${process.env.HOME}/.litentry/checkpoint.txt`;
 
 function saveCheckpoint(blockNumber: number) {

@@ -271,7 +271,7 @@ new PromClient.Gauge({
     const { total, collators, delegators } = await substrateUtils.staking();
     this.set(
       { type: "total_staking" },
-      new BigNumber(total.amount).dividedBy(new BigNumber(1e12)).toNumber()
+      new BigNumber(total).dividedBy(new BigNumber(1e12)).toNumber()
     );
     for (const collator of collators) {
       this.set(
